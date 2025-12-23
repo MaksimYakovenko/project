@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -11,11 +10,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: 8090, // Змінено порт на 8090
-    strictPort: true, // Примусово використовувати порт 8090
+    host: '0.0.0.0',
+    port: 8090,
+    strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://backend:8000',
         changeOrigin: true,
       },
     },
