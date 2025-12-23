@@ -32,7 +32,7 @@
               </span>
             </div>
 
-            <div v-if="authStore.user" class="actions">
+            <div v-if="authStore.user && authStore.user.username === 'admin'" class="actions">
               <router-link :to="`/movies/${movie.id}/edit`" class="btn btn-warning">
                 ✏️ Редагувати
               </router-link>

@@ -1,12 +1,27 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import UserMeSerializer, DirectorSerializer, GenreSerializer, MovieSerializer, MovieListSerializer
+from .serializers import UserMeSerializer, RegisterSerializer, DirectorSerializer, GenreSerializer, MovieSerializer, MovieListSerializer
 from .models import Director, Genre, Movie
+from .permissions import IsAdminUserOrReadOnly
+
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Користувача успішно зареєстровано"},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CookieTokenObtainPairView(TokenObtainPairView):
@@ -61,10 +76,9 @@ class MeView(APIView):
 
 
 class DirectorViewSet(viewsets.ModelViewSet):
-    """ViewSet для керування режисерами"""
     queryset = Director.objects.all()
     serializer_class = DirectorSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUserOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['name']
@@ -72,10 +86,9 @@ class DirectorViewSet(viewsets.ModelViewSet):
 
 
 class GenreViewSet(viewsets.ModelViewSet):
-    """ViewSet для керування жанрами"""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUserOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['name']
@@ -83,9 +96,8 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class MovieViewSet(viewsets.ModelViewSet):
-    """ViewSet для керування фільмами з пошуком та фільтрацією"""
     queryset = Movie.objects.select_related('genre', 'director').all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUserOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['genre', 'director', 'year']
     search_fields = ['title', 'description']
@@ -93,7 +105,6 @@ class MovieViewSet(viewsets.ModelViewSet):
     ordering = ['-year', 'title']
 
     def get_serializer_class(self):
-        """Використовуємо різні serializers для списку та деталей"""
         if self.action == 'list':
             return MovieListSerializer
         return MovieSerializer

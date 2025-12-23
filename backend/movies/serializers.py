@@ -18,15 +18,36 @@ class UserMeSerializer(serializers.ModelSerializer):
         return list(perms)
 
 
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=6)
+    password2 = serializers.CharField(write_only=True, min_length=6)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'password2']
+
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError({"password": "Паролі не співпадають"})
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('password2')
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password']
+        )
+        return user
+
+
 class DirectorSerializer(serializers.ModelSerializer):
-    """Serializer для режисера"""
     class Meta:
         model = Director
         fields = ['id', 'name']
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """Serializer для жанру"""
     class Meta:
         model = Genre
         fields = ['id', 'name']

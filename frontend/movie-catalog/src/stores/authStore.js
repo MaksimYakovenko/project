@@ -1,4 +1,3 @@
-// stores/authStore.js
 import {defineStore} from 'pinia';
 import apiPrivate, {setAccessTokenToHeaders} from '@/utils/apiPrivate.js';
 import apiPublic from "@/utils/apiPublic.js";
@@ -14,6 +13,16 @@ export const useAuthStore = defineStore('auth', {
     }),
 
     actions: {
+        async register(username, email, password) {
+            await apiPublic.post('/register/', {
+                username,
+                email,
+                password,
+                password2: password
+            });
+            return await this.login(username, password);
+        },
+
         async login(username, password) {
             const {data} = await apiPublic.post('/token/', {username, password});
 

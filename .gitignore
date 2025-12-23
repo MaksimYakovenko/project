@@ -1,29 +1,21 @@
-# .gitignore для проєкту Django (backend) + Vue (frontend)
-# Збережіть у корені проєкту
 
-# --- Python ---
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
 *.so
 
-# Distribution / packaging
 .Python
 build/
 *.egg-info/
 pip-wheel-metadata/
 share/python-wheels/
 
-# Virtual environments
 venv/
 .venv/
 env/
 ENV/
 
-# Pytest cache
 .pytest_cache/
 .coverage
 .coverage.*
@@ -31,12 +23,9 @@ htmlcov/
 .tox/
 .nox/
 
-# Django
-# SQLite database
 db.sqlite3
 db.sqlite3-journal
 
-# Collected static files (if you use collectstatic)
 staticfiles/
 
 # Media uploads (do not track user uploads)
