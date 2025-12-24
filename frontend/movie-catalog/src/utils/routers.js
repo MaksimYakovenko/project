@@ -39,7 +39,6 @@ const router = createRouter({
   ],
 });
 
-// Navigation guard для перевірки авторизації
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 

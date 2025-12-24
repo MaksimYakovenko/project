@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Director(models.Model):
-    """Модель режисера"""
     name = models.CharField(max_length=200, verbose_name="Ім'я режисера")
 
     class Meta:
@@ -15,7 +14,6 @@ class Director(models.Model):
 
 
 class Genre(models.Model):
-    """Модель жанру"""
     name = models.CharField(max_length=100, unique=True, verbose_name="Назва жанру")
 
     class Meta:
